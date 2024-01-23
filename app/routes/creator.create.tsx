@@ -114,7 +114,7 @@ const Create = () => {
 
   const {
     data,
-    isLoading: loading,
+    isPending: loading,
     isError: error,
     reset,
     write,
@@ -146,7 +146,7 @@ const Create = () => {
       const formData = new FormData()
 
       formData.append('hash', data.transaction_hash)
-      formData.append('status', 'RECEIVED')
+      formData.append('finalityStatus', 'RECEIVED')
       formData.append('functionName', 'create')
       formData.append('functionCaller', user!.userId)
       formData.append('functionInputGameState', gameState)

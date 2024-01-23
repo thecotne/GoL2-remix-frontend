@@ -32,8 +32,8 @@ const LIMIT = 40
 const DATA_OVERSCAN = 20
 
 const getStartLimit = (searchParams: URLSearchParams) => ({
-  offset: Number(searchParams.get('start') || '0'),
-  limit: Number(searchParams.get('limit') || IN_LIMIT.toString()),
+  offset: Number(searchParams.get('start') ?? '0'),
+  limit: Number(searchParams.get('limit') ?? IN_LIMIT.toString()),
 })
 
 export async function loader({ request }: LoaderArgs): Promise<TypedResponse<LoaderData>> {
@@ -94,11 +94,7 @@ export async function loader({ request }: LoaderArgs): Promise<TypedResponse<Loa
       from "transaction" t
       where "functionName" = 'create'
         and "functionCaller" = ${hexToDecimalString(userId)}
-        and CASE "status"
-          WHEN 'RECEIVED' THEN TRUE
-          WHEN 'PENDING' THEN (select "transactionHash" from creator c where c."transactionHash" = t."hash") is null
-          else FALSE
-        END
+        and "finalityStatus" = 'RECEIVED'
         and "functionInputGameState" != 0
       order by "createdAt" desc
     )

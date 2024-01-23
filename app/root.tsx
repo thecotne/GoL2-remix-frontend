@@ -252,5 +252,6 @@ export function CatchBoundary() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return <AppLayout>{error.message}</AppLayout>
+  console.log(error)
+  return <>{error.message}</>
 }

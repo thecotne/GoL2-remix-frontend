@@ -29,7 +29,7 @@ export default function GameHeader() {
   const {
     write,
     data,
-    isLoading: loading,
+    isPending: loading,
     error,
     reset,
   } = useContractWrite({
@@ -72,7 +72,7 @@ export default function GameHeader() {
     const formData = new FormData()
 
     formData.append('hash', data.transaction_hash)
-    formData.append('status', 'RECEIVED')
+    formData.append('finalityStatus', 'RECEIVED')
     formData.append('functionName', 'evolve')
     formData.append('functionCaller', user!.userId)
     formData.append('functionInputGameId', INFINITE_GAME_GENESIS)

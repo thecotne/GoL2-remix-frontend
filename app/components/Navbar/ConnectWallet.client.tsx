@@ -6,15 +6,14 @@ import Highlight from '~/components/Highlight'
 import { useHelpMessage } from '~/hooks/HelpMessage'
 import { clearTimeout } from 'timers'
 import Dialog from '../Dialog/Dialog'
-import { useAccount, useConnect, useDisconnect} from '@starknet-react/core'
+import { useAccount, useConnect, useDisconnect } from '@starknet-react/core'
 
 const ConnectWallet = () => {
   const [open, setOpen] = useState(false)
-  const {connectors, connect, isError} = useConnect()
+  const { connectors, connect, isError } = useConnect()
   const { disconnect } = useDisconnect()
-  const {account } = useAccount()
-  const accountAddress = account?.address || ''
-
+  const { account } = useAccount()
+  const accountAddress = account?.address ?? ''
 
   const [helpMessage, setHelpMessage] = useHelpMessage()
 
@@ -77,22 +76,22 @@ const ConnectWallet = () => {
       <Dialog
         contentActions={
           !accountAddress &&
-          !isError && 
+          !isError &&
           connectors
             .sort((a, b) => a.id.localeCompare(b.id))
-            .map((connector, i) =>
-                <Button
-                  disabled={!connector.available}
-                  onClick={() => {
-                    setOpen(false)
-                    connect({connector})
-                  }}
-                  full
-                  label={connector.name}
-                  secondary
-                  key={connector.id}
-                />
-            )
+            .map((connector, i) => (
+              <Button
+                disabled={!connector.available}
+                onClick={() => {
+                  setOpen(false)
+                  connect({ connector })
+                }}
+                full
+                label={connector.name}
+                secondary
+                key={connector.id}
+              />
+            ))
         }
         title="Connect a wallet to play"
         smallDescription={

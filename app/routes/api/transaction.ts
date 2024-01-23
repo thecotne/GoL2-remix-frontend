@@ -1,15 +1,17 @@
 import type { ActionArgs } from '@remix-run/node'
 import { num } from 'starknet'
 import { sql } from '~/db.server'
-const hexToDecimalString  = num.hexToDecimalString
+const hexToDecimalString = num.hexToDecimalString
 
 export async function action({ request }: ActionArgs) {
   const body = await request.formData()
+  console.log(body.get('hash'))
+  console.log(Object.fromEntries(body.entries()))
 
   const tx = await sql`
     INSERT INTO transaction (
       "hash",
-      "status",
+      "finalityStatus",
       "functionName",
       "functionCaller",
       "functionInputCellIndex",
@@ -18,7 +20,7 @@ export async function action({ request }: ActionArgs) {
     )
     VALUES (
       ${body.get('hash')},
-      ${body.get('status')},
+      ${body.get('finalityStatus')},
       ${body.get('functionName')},
       ${hexToDecimalString(body.get('functionCaller') as string)},
       ${body.get('functionInputCellIndex')},

@@ -34,7 +34,8 @@ export interface Infinite {
   readonly gameGeneration: string
   readonly gameState: string
   readonly revivedCellIndex: number | null
-  readonly txStatus: string
+  readonly txFinalityStatus: string
+  readonly txExecutionStatus: string | null
   readonly gameExtinct: boolean
   readonly createdAt: Date
 }
@@ -46,7 +47,8 @@ export interface Creator {
   readonly gameId: string
   readonly gameGeneration: string
   readonly gameState: string
-  readonly txStatus: string
+  readonly txFinalityStatus: string
+  readonly txExecutionStatus: string | null
   readonly gameOver: boolean
   readonly createdAt: Date
 }

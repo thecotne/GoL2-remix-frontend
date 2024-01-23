@@ -31,7 +31,7 @@ export default function GameHeader({ gameId, isGameOver }: Props) {
   const {
     write,
     data,
-    isLoading: loading,
+    isPending: loading,
     isError: error,
     reset,
   } = useContractWrite({
@@ -73,7 +73,7 @@ export default function GameHeader({ gameId, isGameOver }: Props) {
     const formData = new FormData()
 
     formData.append('hash', data.transaction_hash)
-    formData.append('status', 'RECEIVED')
+    formData.append('finalityStatus', 'RECEIVED')
     formData.append('functionName', 'evolve')
     formData.append('functionCaller', user!.userId)
     formData.append('functionInputGameId', gameId)
