@@ -5,4 +5,4 @@ WORKDIR /app
 
 RUN yarn install && yarn build
 
-CMD ["yarn", "start"]
+CMD ["./node_modules/.bin/remix-serve", "build"]
