@@ -226,7 +226,7 @@ export function CatchBoundary() {
   const caught = useCatch()
 
   return (
-    <AppLayout>
+    <>
       <ContainerInner paddingTop={100}>
         <StyledContainer>
           <svg width={274} height={376} viewBox="0 0 274 376" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -247,7 +247,7 @@ export function CatchBoundary() {
           </Typography.H3>
         </StyledContainer>
       </ContainerInner>
-    </AppLayout>
+    </>
   )
 }
 
