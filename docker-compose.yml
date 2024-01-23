@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - '5432:5432'
+  indexer:
+    image: ghcr.io/thecotne/gol2-indexer:dev
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file: .env
+  web:
+    # image: ghcr.io/thecotne/gol2-remix-frontend:new-indexer
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+      - indexer
+    env_file: .env
+    ports:
+      - '3000:3000'

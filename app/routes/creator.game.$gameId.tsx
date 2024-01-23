@@ -86,10 +86,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedResp
     (
       SELECT
         "hash",
-        CASE "status"
-          WHEN 'PENDING' THEN 'RECEIVED'
-          else "status"
-        END "status",
+        "finalityStatus" "status",
         CASE "functionName"
           WHEN 'create' THEN 'game_created'
           WHEN 'evolve' THEN 'game_evolved'
@@ -98,9 +95,8 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedResp
         "functionCaller" "owner",
         "createdAt"
       FROM transaction t
-      WHERE CASE "status"
-          WHEN 'RECEIVED' THEN (select "transactionHash" from infinite i where i."transactionHash" = t."hash") is null
-          WHEN 'PENDING' THEN (select "transactionHash" from creator c where c."transactionHash" = t."hash") is null
+      WHERE CASE "finalityStatus"
+          WHEN 'RECEIVED' THEN (select "transactionHash" from creator i where i."transactionHash" = t."hash") is null
           WHEN 'REJECTED' THEN "createdAt" > (now() - interval '15 minutes')
           else FALSE
         END
@@ -117,7 +113,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedResp
     (
       SELECT
         "transactionHash" "hash",
-        "txStatus" "status",
+        "txFinalityStatus" "status",
         "transactionType" "type",
         "transactionOwner" "owner",
         "createdAt"

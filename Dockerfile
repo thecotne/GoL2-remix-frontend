@@ -1,10 +1,36 @@
-FROM node:16.18.0
+FROM node:16.20.2-alpine as build
 
-ADD . /app
+WORKDIR /build
+
+COPY package.json /build/
+COPY yarn.lock /build/
+COPY patches /build/
+
+RUN yarn install
+
+COPY app /build/app/
+COPY esbuild-overrides.js /build/
+COPY esbuild-plugin-babel.js /build/
+COPY remix.config.js /build/
+COPY remix.env.d.ts /build/
+COPY starknet.env.d.ts /build/
+COPY tsconfig.json /build/
+
+RUN yarn build
+
+FROM node:16.20.2-alpine as app
+
 WORKDIR /app
 RUN --mount=type=secret,id=certificate \
           cat /run/secrets/certificate >> /app/ca-certificate.crt
 
-RUN yarn install && yarn build
+COPY package.json /app/
+COPY yarn.lock /app/
+COPY patches /app/
 
-CMD ["yarn","start"]
+RUN yarn install --production
+
+COPY --from=build /build/build /app/build/
+COPY --from=build /build/public /app/public/
+
+CMD ["./node_modules/.bin/remix-serve", "build"]

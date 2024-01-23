@@ -23,8 +23,13 @@ interface LoaderData {
   readonly receivedCells: ReceivedCell[]
 }
 
+interface Statistics {
+  label: string
+  value: string
+}
+
 export async function loader({ request, params }: LoaderArgs): Promise<TypedResponse<LoaderData>> {
-  const statistics = await sql<{ label: string; value: string }>`
+  const statistics = await sql<Statistics>`
     (
       select 'Generations' "label",
         max(COALESCE("gameGeneration", 1)) "value"
@@ -51,14 +56,13 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedResp
   const receivedCells = await sql<ReceivedCell>`
     SELECT
       "hash",
-      "status",
+      "finalityStatus" "status",
       "functionCaller" "owner",
       "functionInputCellIndex" "cellIndex",
       "createdAt"
     FROM transaction t
-    WHERE CASE "status"
+    WHERE CASE "finalityStatus"
         WHEN 'RECEIVED' THEN (select "transactionHash" from infinite i where i."transactionHash" = t."hash") is null
-        WHEN 'PENDING' THEN (select "transactionHash" from infinite i where i."transactionHash" = t."hash") is null
         else FALSE
       END
       AND "functionName" = 'give_life_to_cell'
@@ -69,10 +73,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedResp
     (
       SELECT
         "hash",
-        CASE "status"
-          WHEN 'PENDING' THEN 'RECEIVED'
-          else "status"
-        END "status",
+        "finalityStatus" "status",
         CASE "functionName"
           WHEN 'create' THEN 'game_created'
           WHEN 'evolve' THEN 'game_evolved'
@@ -81,9 +82,8 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedResp
         "functionCaller" "owner",
         "createdAt"
       FROM transaction t
-      WHERE CASE "status"
+      WHERE CASE "finalityStatus"
           WHEN 'RECEIVED' THEN (select "transactionHash" from infinite i where i."transactionHash" = t."hash") is null
-          WHEN 'PENDING' THEN (select "transactionHash" from infinite i where i."transactionHash" = t."hash") is null
           WHEN 'REJECTED' THEN "createdAt" > (now() - interval '15 minutes')
           else FALSE
         END
@@ -100,7 +100,7 @@ export async function loader({ request, params }: LoaderArgs): Promise<TypedResp
     (
       SELECT
         "transactionHash" "hash",
-        "txStatus" "status",
+        "txFinalityStatus" "status",
         "transactionType" "type",
         "transactionOwner" "owner",
         "createdAt"

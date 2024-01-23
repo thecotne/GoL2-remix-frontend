@@ -1,5 +1,4 @@
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from '@remix-run/react'
-import { getInstalledInjectedConnectors, StarknetProvider } from '@starknet-react/core'
 import { ThemeProvider } from '@emotion/react'
 import Layout from './components/Layout'
 import { GlobalStyle } from './styles/globalStyle'
@@ -17,7 +16,7 @@ import ServerStyleContext from './styles/server.context'
 import ClientStyleContext from './styles/client.context'
 import { useContext, useEffect } from 'react'
 import { sql } from './db.server'
-import { hexToDecimalString } from 'starknet/utils/number'
+import { num } from 'starknet'
 import { SelectedCellProvider } from './hooks/SelectedCell'
 import { CreatorGridProvider } from './hooks/CreatorGrid'
 import { HelpMessageProvider } from './hooks/HelpMessage'
@@ -25,6 +24,14 @@ import MobileMessage from './components/MobileMessage'
 import { DialogProvider } from './hooks/Dialog'
 import Dialogs from './components/Dialogs'
 import { RootLoaderDataProvider } from './hooks/useRootLoaderData'
+import { StarknetProvider } from './components/Navbar/StarknetProvider'
+const hexToDecimalString = num.hexToDecimalString
+
+interface UserInfo {
+  balance: number
+  hasIncomingTransfer: boolean
+  hasOutgoingTransfer: boolean
+}
 
 export async function loader({ request }: LoaderArgs) {
   const userId = await getUserId(request)
@@ -34,7 +41,7 @@ export async function loader({ request }: LoaderArgs) {
   let hasOutgoingTransfer = false
 
   if (userId != null) {
-    const res = await sql<{ balance: number; hasIncomingTransfer: boolean; hasOutgoingTransfer: boolean }>`
+    const res = await sql<UserInfo>`
       SELECT
         (
           select "balance"
@@ -67,6 +74,7 @@ export async function loader({ request }: LoaderArgs) {
       BASE_URL: process.env.BASE_URL,
       USE_MAINNET: process.env.USE_MAINNET === 'true',
       CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
+      INFURA_API_KEY: process.env.INFURA_API_KEY,
     },
     userId: await getUserId(request),
     balance,
@@ -194,10 +202,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const connectors = getInstalledInjectedConnectors()
-
   return (
-    <StarknetProvider autoConnect connectors={connectors}>
+    <StarknetProvider>
       <UserProvider>
         <AppLayout>
           <Outlet />
@@ -220,7 +226,7 @@ export function CatchBoundary() {
   const caught = useCatch()
 
   return (
-    <AppLayout>
+    <>
       <ContainerInner paddingTop={100}>
         <StyledContainer>
           <svg width={274} height={376} viewBox="0 0 274 376" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -241,10 +247,11 @@ export function CatchBoundary() {
           </Typography.H3>
         </StyledContainer>
       </ContainerInner>
-    </AppLayout>
+    </>
   )
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
-  return <AppLayout>{error.message}</AppLayout>
+  console.log(error)
+  return <>{error.message}</>
 }
