@@ -29,7 +29,6 @@ COPY patches /app/
 RUN yarn install --production
 
 COPY --from=build /build/build /app/build/
-
-COPY public /app/public/
+COPY --from=build /build/public /app/public/
 
 CMD ["./node_modules/.bin/remix-serve", "build"]
