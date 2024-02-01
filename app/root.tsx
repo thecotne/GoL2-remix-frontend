@@ -1,9 +1,18 @@
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from '@remix-run/react'
+import {
+  Links,
+  LiveReload,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  V2_MetaFunction,
+  useLocation,
+  useRouteError,
+} from '@remix-run/react'
 import { ThemeProvider } from '@emotion/react'
 import Layout from './components/Layout'
 import { GlobalStyle } from './styles/globalStyle'
 import { infinite } from './styles/themes/infinite'
-import { useCatch } from '@remix-run/react'
 import ContainerInner from './components/ContainerInner'
 import styled from '@emotion/styled'
 import Typography from './components/Typography'
@@ -100,11 +109,13 @@ export async function action({ request, params }: ActionArgs) {
   )
 }
 
-export const meta: MetaFunction = () => ({
-  charset: 'utf-8',
-  title: 'GoL2 CREATE GAMES - GIVE LIFE - EVOLVE',
-  viewport: 'width=device-width,initial-scale=1',
-})
+export const meta: V2_MetaFunction = () => [
+  {
+    charset: 'utf-8',
+    title: 'GoL2 CREATE GAMES - GIVE LIFE - EVOLVE',
+    viewport: 'width=device-width,initial-scale=1',
+  },
+]
 
 export const links: LinksFunction = () => [
   {
@@ -222,11 +233,11 @@ const StyledContainer = styled.div`
   height: 100%;
 `
 
-export function CatchBoundary() {
-  const caught = useCatch()
+export function ErrorBoundary() {
+  const caught = useRouteError() as any
 
   return (
-    <>
+    <AppLayout>
       <ContainerInner paddingTop={100}>
         <StyledContainer>
           <svg width={274} height={376} viewBox="0 0 274 376" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -247,11 +258,6 @@ export function CatchBoundary() {
           </Typography.H3>
         </StyledContainer>
       </ContainerInner>
-    </>
+    </AppLayout>
   )
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.log(error)
-  return <>{error.message}</>
 }

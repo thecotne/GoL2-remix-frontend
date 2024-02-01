@@ -51,11 +51,11 @@ export const Tagline = styled.div`
     border-right: 2px solid #3b3f49;
   }
 `
-export const Last = styled.span`
-  ${Tagline} > & {
-    border-right: 0px solid red;
-  }
-`
+export const Last = styled.span``
+//   ${Tagline} > & {
+//     border-right: 0px solid red;
+//   }
+
 export const Logo = styled.svg`
   opacity: 0;
 `

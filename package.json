@@ -1,23 +1,22 @@
 {
   "private": true,
-  "sideEffects": false,
+  "type": "commonjs",
   "scripts": {
-    "build": "yarn remix:build",
-    "dev": "cross-env NODE_ENV=development yarn remix:dev",
-    "start": "yarn node --require newrelic ./node_modules/.bin/remix-serve build",
-    "fmt": "yarn fix:prettier",
-    "fix:prettier": "yarn commands:prettier --write",
-    "fix:eslint": "yarn commands:eslint --fix",
-    "check:prettier": "yarn commands:prettier --check",
-    "check:eslint": "yarn commands:eslint",
-    "check:vitest": "yarn vitest run",
-    "lint": "yarn check:eslint",
-    "test": "yarn check:vitest",
+    "build": "pnpm remix build",
+    "dev": "cross-env NODE_ENV=development pnpm remix dev",
+    "start": "pnpm node --require newrelic ./node_modules/.bin/remix-serve build",
+    "fmt": "pnpm fix:prettier",
+    "fix:prettier": "pnpm commands:prettier --write",
+    "fix:eslint": "pnpm commands:eslint --fix",
+    "check:prettier": "pnpm commands:prettier --check",
+    "check:eslint": "pnpm commands:eslint",
+    "check:vitest": "pnpm vitest run",
+    "lint": "pnpm check:eslint",
+    "test": "pnpm check:vitest",
     "commands:prettier": "prettier **/*.{js,ts,tsx,json,md}",
     "commands:eslint": "eslint *.js *.ts app",
     "remix:build": "NODE_OPTIONS='-r ./esbuild-overrides' remix build",
-    "remix:dev": "NODE_OPTIONS='-r ./esbuild-overrides' remix dev",
-    "postinstall": "patch-package"
+    "remix:dev": "NODE_OPTIONS='-r ./esbuild-overrides' remix dev"
   },
   "dependencies": {
     "@emotion/cache": "^11.10.3",
@@ -33,11 +32,11 @@
     "@remix-run/serve": "^1.7.2",
     "@starknet-react/chains": "^0.1.5",
     "@starknet-react/core": "^2.2.3",
+    "copy-to-clipboard": "^3.3.1",
     "framer-motion": "^6.5.1",
     "gsap": "^3.11.3",
     "immer": "^9.0.15",
     "lottie-react": "^2.3.1",
-    "patch-package": "^6.4.7",
     "pg": "^8.7.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -45,8 +44,7 @@
     "react-use": "^17.4.0",
     "react-virtualized": "^9.22.3",
     "starknet": "^5.24.3",
-    "tiny-invariant": "^1.3.1",
-    "copy-to-clipboard": "^3.3.1"
+    "tiny-invariant": "^1.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",
@@ -69,6 +67,7 @@
     "@vitejs/plugin-react": "^2.1.0",
     "babel-loader": "^8.2.5",
     "cross-env": "^7.0.3",
+    "dotenv-cli": "^7.3.0",
     "dpdm": "^3.14.0",
     "eslint": "8.25.0",
     "eslint-config-prettier": "^8.5.0",
@@ -82,5 +81,11 @@
     "vite": "^3.1.7",
     "vite-tsconfig-paths": "^3.5.1",
     "vitest": "^0.24.0"
+  },
+  "packageManager": "pnpm@8.14.3+sha256.2d0363bb6c314daa67087ef07743eea1ba2e2d360c835e8fec6b5575e4ed9484",
+  "pnpm": {
+    "patchedDependencies": {
+      "react-virtualized@9.22.5": "patches/react-virtualized@9.22.5.patch"
+    }
   }
 }

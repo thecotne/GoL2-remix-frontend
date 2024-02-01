@@ -10,9 +10,6 @@ on:
       - 'new-indexer'
     tags:
       - 'v*'
-  pull_request:
-    branches:
-      - 'dev'
 
 jobs:
   docker:
